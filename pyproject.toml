@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project]
+name = "glink-server"
+version = "0.0.1"
+authors = [
+  { name="clfundev", email="aaaa694514055@163.com" },
+]
+description = "Glink remote desktop service"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: Microsoft :: Windows",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "opencv-python",
+    "numpy",
+    "pyautogui",
+    "websockets",
+    "pywin32",
+    "pillow",
+    "dxcam",
+]
+
+[project.scripts]
+glink-server = "glink_server.main:main"
+
+[project.urls]
+Homepage = "https://github.com/clfundev/glink-server"
+Issues = "https://github.com/clfundev/glink-server/issues"
