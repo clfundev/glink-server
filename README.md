@@ -25,16 +25,22 @@
 ```sh
 # 1. 创建虚拟环境
 python -m venv .venv
+
 # 2. 激活虚拟环境
 .venv\Scripts\activate
+
 # 3. 升级pip（可选）
 python -m pip install --upgrade pip
+
 # 4. 安装构建工具
 pip install build
+
 # 5. 构建
 python -m build
+
 # 6. 安装
 pip install -e .
+
 # 7. 运行
 glink-server
 ```

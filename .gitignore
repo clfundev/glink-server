@@ -1,6 +1,7 @@
 __pycache__/
 .venv/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 logs/
 dist/
 build/

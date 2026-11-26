@@ -26,20 +26,24 @@ class AutoDiscoveryProtocol(asyncio.DatagramProtocol):
         try:
             msg = data.decode("utf-8")
         except UnicodeDecodeError:
-            logger.info(f'Received non-UTF8 data from {addr}, ignored')
+            logger.info(f"Received non-UTF8 data from {addr}, ignored")
             return
 
         if DISCOVERY_MESSAGE not in msg:
-            logger.info(f'Received non-discovery message "{msg}" from {addr}, ignored')
+            logger.info(f"Received non-discovery message [{msg}] from {addr}, ignored")
             return
 
         try:
             hostname = socket.gethostname()
             ip = socket.gethostbyname(hostname)
-            server_info = ServerInfo(hostname.lower(), f"ws://{ip}:{WEBSOCKET_PORT}", hostname)
+            server_info = ServerInfo(
+                hostname.lower(), f"ws://{ip}:{WEBSOCKET_PORT}", hostname
+            )
             response = json.dumps(server_info.__dict__)
-            logger.info(f'Received discovery message "{msg}" from {addr}, responding with {response}')
-            self.transport.sendto(response.encode('utf-8'), addr)
+            logger.info(
+                f"Received discovery message [{msg}] from {addr}, responding with {response}"
+            )
+            self.transport.sendto(response.encode("utf-8"), addr)
         except Exception:
             logger.exception("respond error")
 
@@ -50,7 +54,9 @@ class AutoDiscoveryProtocol(asyncio.DatagramProtocol):
 async def listen_for_auto_discovery_message(address: str = "0.0.0.0"):
     try:
         transport, _ = await asyncio.get_event_loop().create_datagram_endpoint(
-            AutoDiscoveryProtocol, local_addr=(address, DISCOVERY_PORT), allow_broadcast=True
+            AutoDiscoveryProtocol,
+            local_addr=(address, DISCOVERY_PORT),
+            allow_broadcast=True,
         )
     except Exception:
         logger.exception(f"Unable to bind {address}:{DISCOVERY_PORT}")

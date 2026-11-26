@@ -25,16 +25,22 @@
 ```sh
 # 1. Create a virtual environment
 python -m venv .venv
+
 # 2. Activate the virtual environment
 .venv\Scripts\activate
+
 # 3. Upgrade pip (optional)
 python -m pip install --upgrade pip
+
 # 4. Install the build tool
 pip install build
+
 # 5. Build
 python -m build
+
 # 6. Install
 pip install -e .
+
 # 7. Run
 glink-server
 ```

@@ -40,7 +40,7 @@ class ScreenGrabber:
 
     async def _start(self):
         if self._cam is None:
-            self._cam = dxcam.create(output_color='RGBA')
+            self._cam = dxcam.create(output_color="RGBA")
             self._cam.start(target_fps=self._fps)
             self._task = asyncio.create_task(self._run())
         else:
@@ -61,7 +61,9 @@ class ScreenGrabber:
         try:
             while True:
                 # 获取屏幕截图
-                screenshot = await asyncio.get_event_loop().run_in_executor(None, self._get_screenshot)
+                screenshot = await asyncio.get_event_loop().run_in_executor(
+                    None, self._get_screenshot
+                )
                 if screenshot is None:
                     continue
                 # 将屏幕截图发送给所有客户端
@@ -79,6 +81,7 @@ class ScreenGrabber:
             await ws.send(data)
             return True
         except Exception:
+            logger.debug("WebSocket send message error", exc_info=True)
             return False
 
     # 屏幕截图补充绘制光标
@@ -104,7 +107,15 @@ class ScreenGrabber:
             # 将光标位图转换成PIL Image
             bmpinfo = hbmp.GetInfo()
             bmpstr = hbmp.GetBitmapBits(True)
-            cursor_img = Image.frombuffer('RGB', (bmpinfo['bmWidth'], bmpinfo['bmHeight']), bmpstr, 'raw', 'BGRX', 0, 1).convert("RGBA")
+            cursor_img = Image.frombuffer(
+                "RGB",
+                (bmpinfo["bmWidth"], bmpinfo["bmHeight"]),
+                bmpstr,
+                "raw",
+                "BGRX",
+                0,
+                1,
+            ).convert("RGBA")
 
             # 将纯黑且不透明的像素改为透明
             pixels = cursor_img.load()
@@ -125,7 +136,7 @@ class ScreenGrabber:
             # 将光标粘贴到屏幕截图上
             screen_img.paste(cursor_img, (paste_x, paste_y), cursor_img)
         except Exception:
-            logger.exception("Failed to draw cursor")
+            logger.debug("Failed to draw cursor", exc_info=True)
         finally:
             # 资源释放
             if hbmp is not None:
@@ -137,11 +148,13 @@ class ScreenGrabber:
 
     # 对dxcam屏幕截图补充绘制光标、进行JPEG编码
     def _process_frame(self, frame: np.ndarray) -> bytes:
-        img = Image.fromarray(frame, mode='RGBA')
+        img = Image.fromarray(frame, mode="RGBA")
 
         self._draw_cursor(img)
         img_bgr = cv2.cvtColor(np.array(img), cv2.COLOR_RGBA2BGR)
-        _, buffer = cv2.imencode(".jpg", img_bgr, [cv2.IMWRITE_JPEG_QUALITY, self._quality])
+        _, buffer = cv2.imencode(
+            ".jpg", img_bgr, [cv2.IMWRITE_JPEG_QUALITY, self._quality]
+        )
         return buffer.tobytes()
 
     # 获取处理过的屏幕截图

@@ -89,7 +89,9 @@ async def handle_client(websocket: ServerConnection):
         await screen_grabber.register(websocket)
         async for message in websocket:
             if isinstance(message, str):
-                await asyncio.get_event_loop().run_in_executor(None, execute_command, message)
+                await asyncio.get_event_loop().run_in_executor(
+                    None, execute_command, message
+                )
     except Exception:
         logger.exception("WebSocket connection error")
     finally:
@@ -98,6 +100,8 @@ async def handle_client(websocket: ServerConnection):
 
 
 async def run_remote_desktop_service():
-    logger.info(f"WebSocket server started on ws://{socket.gethostbyname(socket.gethostname())}:{WEBSOCKET_PORT}")
+    logger.info(
+        f"WebSocket server started on ws://{socket.gethostbyname(socket.gethostname())}:{WEBSOCKET_PORT}"
+    )
     async with serve(handle_client, "", WEBSOCKET_PORT):
         await asyncio.Event().wait()
